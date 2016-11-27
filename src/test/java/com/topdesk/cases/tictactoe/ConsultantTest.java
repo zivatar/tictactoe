@@ -19,10 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.topdesk.cases.tictactoe.yoursolution.YourConsultant;
-import java.util.HashMap;
 
 public class ConsultantTest {
-    
+
 	private Consultant consultant;
 
 	@Before

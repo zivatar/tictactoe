@@ -1,8 +1,5 @@
 package com.topdesk.cases.tictactoe;
 
-import com.topdesk.cases.tictactoe.yoursolution.YourConsultant;
-import java.util.Map;
-
 /**
  * A {@code Consultant} advises which move to make in an in-progress game of
  * Tic-tac-toe.

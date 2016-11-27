@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.topdesk.cases.tictactoe.yoursolution;
 
 import com.topdesk.cases.tictactoe.CellLocation;
@@ -12,10 +7,7 @@ import static com.topdesk.cases.tictactoe.yoursolution.YourConsultant.SAMELINE;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author lelo
- */
+
 public class MGameBoard {
     private Map<CellLocation, CellState> State = new HashMap<CellLocation, CellState>();
     
