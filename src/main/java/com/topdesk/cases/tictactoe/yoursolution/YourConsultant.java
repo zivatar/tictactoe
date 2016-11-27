@@ -88,7 +88,7 @@ public class YourConsultant implements Consultant {
                         int sc = MinMax(mgb, depth + 1, 1, p);
                         localScores.add(sc);
                     }
-                    mgb.setCellState(l, CellState.EMPTY);
+                    mgb.clearCellState(l);
                 }
             }
             

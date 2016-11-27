@@ -7,22 +7,53 @@ import static com.topdesk.cases.tictactoe.yoursolution.YourConsultant.SAMELINE;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Mutable GameBoard with utils for finding the optimal next step
+ */
 public class MGameBoard {
     private Map<CellLocation, CellState> State = new HashMap<CellLocation, CellState>();
     
+    /**
+     * Constuctor of the MutableGameBoard with an existing GameBoard
+     * @param gb
+     *          an in-progress game
+     */
     public MGameBoard(GameBoard gb) {
         for( CellLocation loc : CellLocation.values() ) {
             this.State.put(loc, gb.getCellState(loc));
         }
     }
     
+    /**
+     * Get the CellState of a field indexed with CellLocation
+     * @param loc
+     *          CellLocation where CellState is needed
+     * @return CellState of the CellLocation
+     */
     public CellState getCellState(CellLocation loc) {
         return this.State.get(loc);
     }
     
+    /**
+     * Set a CellLocation to a specified CellState
+     * @param loc
+     *          CellLocation to set
+     * @param st 
+     *          CellState to set
+     * @throws IllegalStateException
+     *          if someone tries to modify a non-empty cell
+     */
     public void setCellState(CellLocation loc, CellState st) {
-        this.State.put(loc, st);
+        if ( this.getCellState(loc) == CellState.EMPTY ) {
+            this.State.put(loc, st);
+        }
+        else {
+            throw new IllegalStateException("Tried to modify a non-empty cell.");
+        }
+    }
+    
+    public void clearCellState(CellLocation loc) {
+        this.State.put(loc, CellState.EMPTY);
     }
     
     public CellState WhoIsWinner() {
