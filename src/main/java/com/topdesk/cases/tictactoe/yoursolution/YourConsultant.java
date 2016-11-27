@@ -23,12 +23,12 @@ public class YourConsultant implements Consultant {
 	@Override
 	public CellLocation suggest(GameBoard gb) {
             MGameBoard mgb = new MGameBoard(gb);
-            if ( mgb.WhoIsWinner() == CellState.OCCUPIED_BY_O ) throw new IllegalStateException("Winner: O");
-            else if ( mgb.WhoIsWinner() == CellState.OCCUPIED_BY_X ) throw new IllegalStateException("Winner: X");
-            else return FindBestStep(mgb);
+            if ( mgb.whoIsWinner() == CellState.OCCUPIED_BY_O ) throw new IllegalStateException("Winner: O");
+            else if ( mgb.whoIsWinner() == CellState.OCCUPIED_BY_X ) throw new IllegalStateException("Winner: X");
+            else return findTheBestStep(mgb);
 	}
         
-        public CellState OtherPlayer(CellState np) {
+        public CellState otherPlayer(CellState np) {
             if (np == CellState.OCCUPIED_BY_X) return CellState.OCCUPIED_BY_O;
             else if (np == CellState.OCCUPIED_BY_O) return CellState.OCCUPIED_BY_X;
             return CellState.EMPTY;
@@ -47,12 +47,11 @@ public class YourConsultant implements Consultant {
         
         public Map<CellLocation, Integer> Scores;
         
-        public CellLocation FindBestStep(MGameBoard mgb) {
+        public CellLocation findTheBestStep(MGameBoard mgb) {
             Scores = new HashMap<CellLocation, Integer>();
             
-            
-            CellState p = mgb.NextPlayer();
-            MinMax(mgb, 0, 1, p);
+            CellState p = mgb.nextPlayer();
+            minMax(mgb, 0, 1, p);
             
             int maxVal = Integer.MIN_VALUE;
             CellLocation maxLoc = CellLocation.CENTRE_CENTRE;
@@ -69,23 +68,23 @@ public class YourConsultant implements Consultant {
             return maxLoc;
         }
         
-        public int MinMax(MGameBoard mgb, int depth, int turn, CellState p) {
-            CellState winner = mgb.WhoIsWinner();
+        public int minMax(MGameBoard mgb, int depth, int turn, CellState p) {
+            CellState winner = mgb.whoIsWinner();
             if( winner == p )return 1;
-            else if( winner == OtherPlayer(p) ) return -1;
+            else if( winner == otherPlayer(p) ) return -1;
             
             List<Integer> localScores = new ArrayList<>(); 
             for(CellLocation l : CellLocation.values()) {
                 if( mgb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
                     if ( turn == 1 ) { // original player
                         mgb.setCellState(l, p);
-                        int sc = MinMax(mgb, depth + 1, 2, p);
+                        int sc = minMax(mgb, depth + 1, 2, p);
                         localScores.add(sc);
                         if ( depth == 0 ) Scores.put(l, sc);
                     }
                     else if ( turn == 2 ) { // other player
-                        mgb.setCellState(l, OtherPlayer(p));
-                        int sc = MinMax(mgb, depth + 1, 1, p);
+                        mgb.setCellState(l, otherPlayer(p));
+                        int sc = minMax(mgb, depth + 1, 1, p);
                         localScores.add(sc);
                     }
                     mgb.clearCellState(l);

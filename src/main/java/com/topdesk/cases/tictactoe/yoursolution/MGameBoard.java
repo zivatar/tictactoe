@@ -37,7 +37,7 @@ public class MGameBoard {
     /**
      * Set a CellLocation to a specified CellState
      * @param loc
-     *          CellLocation to set
+     *          Location of the cell to set
      * @param st 
      *          CellState to set
      * @throws IllegalStateException
@@ -52,11 +52,20 @@ public class MGameBoard {
         }
     }
     
+    /**
+     * Make a cell empty again
+     * @param loc 
+     *          Location of the cell to reset
+     */
     public void clearCellState(CellLocation loc) {
         this.State.put(loc, CellState.EMPTY);
     }
     
-    public CellState WhoIsWinner() {
+    /**
+     * Decide if a game is already won, and if it is, then which player is the winner
+     * @return The ID of the winner player with CellState
+     */
+    public CellState whoIsWinner() {
         for (CellLocation[] line : SAMELINE) {
             CellState[] l = { this.getCellState(line[0]), this.getCellState(line[1]), this.getCellState(line[2]) };
             if (l[0] != CellState.EMPTY && l[0] == l[1] && l[0] == l[2]) {
@@ -66,7 +75,13 @@ public class MGameBoard {
         return CellState.EMPTY;
     }
     
-    public CellState NextPlayer() {
+    /**
+     * Decide which player is the next (or the table is already full)
+     * @return CellState id of the next player
+     * @throws IllegalStateException
+     *          If the table is full
+     */
+    public CellState nextPlayer() {
             int numX = 0, numO = 0, numEmpty = 0;
             for(CellLocation l : CellLocation.values()) {
                 switch(this.getCellState(l)) {
