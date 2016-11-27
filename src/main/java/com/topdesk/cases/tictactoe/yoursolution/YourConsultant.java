@@ -22,8 +22,10 @@ public class YourConsultant implements Consultant {
 
 	@Override
 	public CellLocation suggest(GameBoard gb) {
-		// TODO Auto-generated method stub
-		return FindBestStep(gb);
+            MGameBoard mgb = new MGameBoard(gb);
+            if ( mgb.WhoIsWinner() == CellState.OCCUPIED_BY_O ) throw new IllegalStateException("Winner: O");
+            else if ( mgb.WhoIsWinner() == CellState.OCCUPIED_BY_X ) throw new IllegalStateException("Winner: X");
+            else return FindBestStep(mgb);
 	}
         
         public CellState OtherPlayer(CellState np) {
@@ -45,14 +47,26 @@ public class YourConsultant implements Consultant {
         
         public Map<CellLocation, Integer> Scores;
         
-        public CellLocation FindBestStep(GameBoard gb) {
+        public CellLocation FindBestStep(MGameBoard mgb) {
             Scores = new HashMap<CellLocation, Integer>();
             
-            MGameBoard mgb = new MGameBoard(gb);
+            
             CellState p = mgb.NextPlayer();
             MinMax(mgb, 0, 1, p);
             
-            return CellLocation.BOTTOM_CENTRE;
+            int maxVal = Integer.MIN_VALUE;
+            CellLocation maxLoc = CellLocation.CENTRE_CENTRE;
+            for ( CellLocation loc : CellLocation.values() ) {
+                if ( mgb.getCellState(loc) == CellState.EMPTY && Scores.containsKey(loc) ) {
+                    int val = Scores.get(loc);
+                    if ( val > maxVal ) {
+                        maxVal = val;
+                        maxLoc = loc;
+                    }
+                }
+            }
+            
+            return maxLoc;
         }
         
         public int MinMax(MGameBoard mgb, int depth, int turn, CellState p) {
@@ -64,16 +78,22 @@ public class YourConsultant implements Consultant {
             for(CellLocation l : CellLocation.values()) {
                 if( mgb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
                     if ( turn == 1 ) { // original player
-                        //mgb.setCellState(l, );
+                        mgb.setCellState(l, p);
+                        int sc = MinMax(mgb, depth + 1, 2, p);
+                        localScores.add(sc);
+                        if ( depth == 0 ) Scores.put(l, sc);
                     }
                     else if ( turn == 2 ) { // other player
-                        
+                        mgb.setCellState(l, OtherPlayer(p));
+                        int sc = MinMax(mgb, depth + 1, 1, p);
+                        localScores.add(sc);
                     }
+                    mgb.setCellState(l, CellState.EMPTY);
                 }
             }
             
             if( localScores.size() == 0) return 0;
-            else if( mgb.NextPlayer() == p ) return Collections.max(localScores);
+            else if ( turn == 1 ) return Collections.max(localScores);
             else return Collections.min(localScores);
             
         }
