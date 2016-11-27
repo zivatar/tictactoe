@@ -75,9 +75,8 @@ public class YourConsultant implements Consultant {
      */
     public CellLocation findTheBestStep(MGameBoard mgb) {
         cellScores = new HashMap<CellLocation, Integer>();
-           
-        CellState p = mgb.nextPlayer();
-        minMax(mgb, 0, 1, p);
+
+        minMax(mgb, 0, 1);
             
         // find the location of the largest score
         int maxVal = Integer.MIN_VALUE;
@@ -95,23 +94,25 @@ public class YourConsultant implements Consultant {
         return maxLoc;
     }
         
-    public int minMax(MGameBoard mgb, int depth, int turn, CellState p) {
+    public int minMax(MGameBoard mgb, int depth, int turn) {
         CellState winner = mgb.whoIsWinner();
-        if( winner == p )return 1;
-        else if( winner == otherPlayer(p) ) return -1;
-            
+        
+        if( winner == mgb.getOriginalPlayer() )return 1;
+        else if( winner == otherPlayer(mgb.getOriginalPlayer()) ) return -1;
+           
+        
         List<Integer> localScores = new ArrayList<>(); 
         for(CellLocation l : CellLocation.values()) {
             if( mgb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
                 if ( turn == 1 ) { // original player
-                    mgb.setCellState(l, p);
-                    int sc = minMax(mgb, depth + 1, 2, p);
+                    mgb.setCellState(l, mgb.getOriginalPlayer());
+                    int sc = minMax(mgb, depth + 1, 2);
                     localScores.add(sc);
                     if ( depth == 0 ) cellScores.put(l, sc);
                 }
                 else if ( turn == 2 ) { // other player
-                    mgb.setCellState(l, otherPlayer(p));
-                    int sc = minMax(mgb, depth + 1, 1, p);
+                    mgb.setCellState(l, otherPlayer(mgb.getOriginalPlayer()));
+                    int sc = minMax(mgb, depth + 1, 1);
                     localScores.add(sc);
                 }
                 mgb.clearCellState(l);

@@ -13,6 +13,8 @@ import java.util.Map;
 public class MGameBoard {
     private Map<CellLocation, CellState> State = new HashMap<CellLocation, CellState>();
     
+    private CellState originalPlayer;
+    
     /**
      * Constuctor of the MutableGameBoard with an existing GameBoard
      * @param gb
@@ -22,6 +24,7 @@ public class MGameBoard {
         for( CellLocation loc : CellLocation.values() ) {
             this.State.put(loc, gb.getCellState(loc));
         }
+        this.originalPlayer = nextPlayer();
     }
     
     /**
@@ -32,6 +35,10 @@ public class MGameBoard {
      */
     public CellState getCellState(CellLocation loc) {
         return this.State.get(loc);
+    }
+    
+    public CellState getOriginalPlayer() {
+        return this.originalPlayer;
     }
     
     /**
