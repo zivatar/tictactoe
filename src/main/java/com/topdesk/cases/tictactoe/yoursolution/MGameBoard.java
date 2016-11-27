@@ -25,7 +25,7 @@ public class MGameBoard {
     }
     
     /**
-     * Get the CellState of a field indexed with CellLocation
+     * Gets the CellState of a field indexed with CellLocation
      * @param loc
      *          CellLocation where CellState is needed
      * @return CellState of the CellLocation
@@ -35,7 +35,7 @@ public class MGameBoard {
     }
     
     /**
-     * Set a CellLocation to a specified CellState
+     * Sets a CellLocation to a specified CellState
      * @param loc
      *          Location of the cell to set
      * @param st 
@@ -53,7 +53,7 @@ public class MGameBoard {
     }
     
     /**
-     * Make a cell empty again
+     * Makes a cell empty again
      * @param loc 
      *          Location of the cell to reset
      */
@@ -62,7 +62,7 @@ public class MGameBoard {
     }
     
     /**
-     * Decide if a game is already won, and if it is, then which player is the winner
+     * Decides if a game is already won, and if it is, then which player is the winner
      * @return The ID of the winner player with CellState
      */
     public CellState whoIsWinner() {
@@ -76,10 +76,10 @@ public class MGameBoard {
     }
     
     /**
-     * Decide which player is the next (or the table is already full)
+     * Decides which player is the next (or the board is already full)
      * @return CellState id of the next player
      * @throws IllegalStateException
-     *          If the table is full
+     *          If the board is full
      */
     public CellState nextPlayer() {
             int numX = 0, numO = 0, numEmpty = 0;
