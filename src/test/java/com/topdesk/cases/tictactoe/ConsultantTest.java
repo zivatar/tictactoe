@@ -23,13 +23,6 @@ import java.util.HashMap;
 
 public class ConsultantTest {
     
-    public static void main(String[] args) {
-        Consultant c = new YourConsultant();
-        GameBoard b = board("fork00");
-        //System.out.println(c.WhoIsWinner(b));
-        System.out.println(c.suggest(b));
-    }
-
 	private Consultant consultant;
 
 	@Before
