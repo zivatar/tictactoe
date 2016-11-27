@@ -26,17 +26,10 @@ public class YourConsultant implements Consultant {
 		return FindBestStep(gb);
 	}
         
-        public enum Player {
-            X, 
-            O,
-            Empty;
-        }
-        
-        
-        
-        public Player OtherPlayer(Player np) {
-            if (np == Player.X) return Player.O;
-            return Player.X;
+        public CellState OtherPlayer(CellState np) {
+            if (np == CellState.OCCUPIED_BY_X) return CellState.OCCUPIED_BY_O;
+            else if (np == CellState.OCCUPIED_BY_O) return CellState.OCCUPIED_BY_X;
+            return CellState.EMPTY;
         }
         
         public static final CellLocation[][] SAMELINE = {
@@ -48,48 +41,40 @@ public class YourConsultant implements Consultant {
             { CellLocation.TOP_LEFT, CellLocation.CENTRE_LEFT, CellLocation.BOTTOM_LEFT },
             { CellLocation.TOP_CENTRE, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_CENTRE },
             { CellLocation.TOP_RIGHT, CellLocation.CENTRE_RIGHT, CellLocation.BOTTOM_RIGHT }
-        };
+        }; 
         
-        public CellState CellStateFromPlayer(Player p) {
-            if (p == Player.O) return CellState.OCCUPIED_BY_O;
-            else if (p == Player.X) return CellState.OCCUPIED_BY_X;
-            else return CellState.EMPTY;
-        }
-        
-        public Player PlayerFromCellState(CellState cs) {
-            if (cs == CellState.OCCUPIED_BY_O) return Player.O;
-            else if (cs == CellState.OCCUPIED_BY_X) return Player.X;
-            else return Player.Empty;
-        }
-        
-        
-        
-        public Map<CellLocation, Integer> SCORE;
+        public Map<CellLocation, Integer> Scores;
         
         public CellLocation FindBestStep(GameBoard gb) {
-            SCORE = new HashMap<CellLocation, Integer>();
+            Scores = new HashMap<CellLocation, Integer>();
             
             MGameBoard mgb = new MGameBoard(gb);
-            Player p = mgb.NextPlayer();
-            MinMax(mgb, p);
+            CellState p = mgb.NextPlayer();
+            MinMax(mgb, 0, 1, p);
             
             return CellLocation.BOTTOM_CENTRE;
         }
         
-        public int MinMax(MGameBoard mgb, Player p) {
-            if( PlayerFromCellState(mgb.WhoIsWinner()) == p ) return 1;
-            else if ( PlayerFromCellState(mgb.WhoIsWinner()) == p ) return -1;
+        public int MinMax(MGameBoard mgb, int depth, int turn, CellState p) {
+            CellState winner = mgb.WhoIsWinner();
+            if( winner == p )return 1;
+            else if( winner == OtherPlayer(p) ) return -1;
             
-            List<Integer> scores = new ArrayList<>(); 
+            List<Integer> localScores = new ArrayList<>(); 
             for(CellLocation l : CellLocation.values()) {
                 if( mgb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
-                    
+                    if ( turn == 1 ) { // original player
+                        //mgb.setCellState(l, );
+                    }
+                    else if ( turn == 2 ) { // other player
+                        
+                    }
                 }
             }
             
-            if( scores.size() == 0) return 0;
-            else if( mgb.NextPlayer() == p ) return Collections.max(scores);
-            else return Collections.min(scores);
+            if( localScores.size() == 0) return 0;
+            else if( mgb.NextPlayer() == p ) return Collections.max(localScores);
+            else return Collections.min(localScores);
             
         }
         

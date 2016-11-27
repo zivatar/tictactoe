@@ -43,7 +43,7 @@ public class MGameBoard {
         return CellState.EMPTY;
     }
     
-    public YourConsultant.Player NextPlayer() {
+    public CellState NextPlayer() {
             int numX = 0, numO = 0, numEmpty = 0;
             for(CellLocation l : CellLocation.values()) {
                 switch(this.getCellState(l)) {
@@ -59,8 +59,8 @@ public class MGameBoard {
                 }
             }
             if ( numEmpty == 0 ) throw new IllegalStateException("There is no empty place");
-            else if ( numX <= numO ) return YourConsultant.Player.X;
-            else return YourConsultant.Player.O;
+            else if ( numX <= numO ) return CellState.OCCUPIED_BY_X;
+            else return CellState.OCCUPIED_BY_O;
         }
     
 }
