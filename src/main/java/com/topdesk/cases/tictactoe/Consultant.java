@@ -63,7 +63,4 @@ public interface Consultant {
 	 *             left.
 	 */
 	CellLocation suggest(GameBoard gameBoard);
-        YourConsultant.Player NextPlayer(GameBoard gameboard); //------
-
-        Map<CellLocation, Integer> CalcPoints(GameBoard gb); //--
 }

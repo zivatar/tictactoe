@@ -28,10 +28,10 @@ public class ConsultantTest {
         GameBoard b = board("block_fork04");
         //System.out.println(c.WhoIsWinner(b));
         Map<CellLocation, Integer> points = new HashMap<CellLocation, Integer>();
-        points = c.CalcPoints(b);
-        for(CellLocation l : CellLocation.values()) {
+        //points = c.CalcPoints(b);
+        /*for(CellLocation l : CellLocation.values()) {
             System.out.println("" + l + " : " + points.get(l));
-        }
+        }*/
     }
 
 	private Consultant consultant;

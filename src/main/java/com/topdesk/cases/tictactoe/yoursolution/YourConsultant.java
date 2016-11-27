@@ -90,49 +90,6 @@ public class YourConsultant implements Consultant {
             return Player.Empty;
         }
         
-        public Map<CellLocation, Integer> CalcPoints(GameBoard gb) {
-            Map<CellLocation, Integer> points = new HashMap<CellLocation, Integer>();
-            Player nextPlayer = NextPlayer(gb);
-            Player otherPlayer = OtherPlayer(nextPlayer);
-            // https://www.ntu.edu.sg/home/ehchua/programming/java/JavaGame_TicTacToe_AI.html
-            
-            for (CellLocation element : CellLocation.values()) {
-                if (gb.getCellState(element) == CellState.EMPTY) {
-                    for (CellLocation[] line : SAMELINE) {
-                        if (Arrays.asList(line).contains(element)) {
-                            System.out.println(Arrays.asList(line).toString());
-                            CellState[] l = { gb.getCellState(line[0]), gb.getCellState(line[1]), 
-                                gb.getCellState(line[2]) };
-                            int numNext = 0, numOther = 0, numEmpty = 0;
-                            for (CellState s : l) {
-                                if(s == CellStateFromPlayer(nextPlayer)) numNext++;
-                                else if (s == CellStateFromPlayer(otherPlayer)) numOther++;
-                                else if (s == CellStateFromPlayer(Player.Empty)) numEmpty++;
-                            }
-                            // simulate a new marker for next step with next player
-                            numNext++;
-                            numEmpty--;
-                            
-                            int p = points.getOrDefault(element, 0);
-                            if ( numNext == 3 ) p+= 100;
-                            else if ( numNext == 2 && numEmpty == 1 ) p += 10; // 2-in-a-line-for-next
-                            else if ( numNext == 1 && numEmpty == 2 ) p += 1;
-                            else if ( numOther == 3 ) p -= 100; // 3-in-a-line-for-other
-                            else if ( numOther == 2 && numEmpty == 1 ) p -= 10;
-                            else if ( numOther == 1 && numEmpty == 2 ) p -= 1;
-                            points.put( element, p );
-                            
-                        }
-                    }
-                }
-            }
-            
-                
-                
-            
-            return points;
-        }
-        
         public Map<CellLocation, Integer> SCORE;
         
         public CellLocation FindBestStep(GameBoard gb) {
