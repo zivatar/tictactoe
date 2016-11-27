@@ -19,36 +19,58 @@ import java.util.Map;
  * This consultant follows the strategy described in wikipedia : https://en.wikipedia.org/wiki/Tic-tac-toe#Strategy
  */
 public class YourConsultant implements Consultant {
+    
+    /**
+     * Stores the CellLocations which are considered as placed in the same line
+     * (horizontally, vertically and diagonally)
+     */
+    public static final CellLocation[][] SAMELINE = {
+        { CellLocation.BOTTOM_CENTRE, CellLocation.BOTTOM_LEFT, CellLocation.BOTTOM_RIGHT },
+        { CellLocation.TOP_CENTRE, CellLocation.TOP_LEFT, CellLocation.TOP_RIGHT },
+        { CellLocation.CENTRE_CENTRE, CellLocation.CENTRE_LEFT, CellLocation.CENTRE_RIGHT },
+        { CellLocation.TOP_LEFT, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_RIGHT },
+        { CellLocation.TOP_RIGHT, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_LEFT },
+        { CellLocation.TOP_LEFT, CellLocation.CENTRE_LEFT, CellLocation.BOTTOM_LEFT },
+        { CellLocation.TOP_CENTRE, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_CENTRE },
+        { CellLocation.TOP_RIGHT, CellLocation.CENTRE_RIGHT, CellLocation.BOTTOM_RIGHT }
+    }; 
+        
+    /**
+     * Stores the calculated
+     */
+    public Map<CellLocation, Integer> cellScores;
 
-	@Override
-	public CellLocation suggest(GameBoard gb) {
-            MGameBoard mgb = new MGameBoard(gb);
-            if ( mgb.whoIsWinner() == CellState.OCCUPIED_BY_O ) throw new IllegalStateException("Winner: O");
-            else if ( mgb.whoIsWinner() == CellState.OCCUPIED_BY_X ) throw new IllegalStateException("Winner: X");
-            else return findTheBestStep(mgb);
-	}
+    /**
+     * Suggest the next optimal step
+     * @param gb
+     *          a running game
+     * @return the location of the next step
+     * @throws IllegalStateException if the game is already won
+     */
+    @Override
+    public CellLocation suggest(GameBoard gb) {
+        MGameBoard mgb = new MGameBoard(gb);
+        if ( mgb.whoIsWinner() == CellState.OCCUPIED_BY_O ) throw new IllegalStateException("Winner: O");
+        else if ( mgb.whoIsWinner() == CellState.OCCUPIED_BY_X ) throw new IllegalStateException("Winner: X");
+        else return findTheBestStep(mgb);
+    }
+
+    /**
+     * Util function to decide the ID of the other player
+     * @param np
+     *          the CellState of a player
+     * @return the CellState of the other player, or CellState.EMPTY if the input was EMPTY
+     */
+    public CellState otherPlayer(CellState np) {
+        if (np == CellState.OCCUPIED_BY_X) return CellState.OCCUPIED_BY_O;
+        else if (np == CellState.OCCUPIED_BY_O) return CellState.OCCUPIED_BY_X;
+        return CellState.EMPTY;
+    }
         
-        public CellState otherPlayer(CellState np) {
-            if (np == CellState.OCCUPIED_BY_X) return CellState.OCCUPIED_BY_O;
-            else if (np == CellState.OCCUPIED_BY_O) return CellState.OCCUPIED_BY_X;
-            return CellState.EMPTY;
-        }
-        
-        public static final CellLocation[][] SAMELINE = {
-            { CellLocation.BOTTOM_CENTRE, CellLocation.BOTTOM_LEFT, CellLocation.BOTTOM_RIGHT },
-            { CellLocation.TOP_CENTRE, CellLocation.TOP_LEFT, CellLocation.TOP_RIGHT },
-            { CellLocation.CENTRE_CENTRE, CellLocation.CENTRE_LEFT, CellLocation.CENTRE_RIGHT },
-            { CellLocation.TOP_LEFT, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_RIGHT },
-            { CellLocation.TOP_RIGHT, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_LEFT },
-            { CellLocation.TOP_LEFT, CellLocation.CENTRE_LEFT, CellLocation.BOTTOM_LEFT },
-            { CellLocation.TOP_CENTRE, CellLocation.CENTRE_CENTRE, CellLocation.BOTTOM_CENTRE },
-            { CellLocation.TOP_RIGHT, CellLocation.CENTRE_RIGHT, CellLocation.BOTTOM_RIGHT }
-        }; 
-        
-        public Map<CellLocation, Integer> Scores;
+    
         
         public CellLocation findTheBestStep(MGameBoard mgb) {
-            Scores = new HashMap<CellLocation, Integer>();
+            cellScores = new HashMap<CellLocation, Integer>();
             
             CellState p = mgb.nextPlayer();
             minMax(mgb, 0, 1, p);
@@ -56,8 +78,8 @@ public class YourConsultant implements Consultant {
             int maxVal = Integer.MIN_VALUE;
             CellLocation maxLoc = CellLocation.CENTRE_CENTRE;
             for ( CellLocation loc : CellLocation.values() ) {
-                if ( mgb.getCellState(loc) == CellState.EMPTY && Scores.containsKey(loc) ) {
-                    int val = Scores.get(loc);
+                if ( mgb.getCellState(loc) == CellState.EMPTY && cellScores.containsKey(loc) ) {
+                    int val = cellScores.get(loc);
                     if ( val > maxVal ) {
                         maxVal = val;
                         maxLoc = loc;
@@ -80,7 +102,7 @@ public class YourConsultant implements Consultant {
                         mgb.setCellState(l, p);
                         int sc = minMax(mgb, depth + 1, 2, p);
                         localScores.add(sc);
-                        if ( depth == 0 ) Scores.put(l, sc);
+                        if ( depth == 0 ) cellScores.put(l, sc);
                     }
                     else if ( turn == 2 ) { // other player
                         mgb.setCellState(l, otherPlayer(p));
