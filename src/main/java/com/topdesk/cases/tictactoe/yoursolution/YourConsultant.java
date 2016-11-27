@@ -21,9 +21,9 @@ import java.util.Map;
 public class YourConsultant implements Consultant {
 
 	@Override
-	public CellLocation suggest(GameBoard gameBoard) {
+	public CellLocation suggest(GameBoard gb) {
 		// TODO Auto-generated method stub
-		return CellLocation.TOP_CENTRE;
+		return FindBestStep(gb);
 	}
         
         public enum Player {
@@ -32,25 +32,7 @@ public class YourConsultant implements Consultant {
             Empty;
         }
         
-        public Player NextPlayer(GameBoard gameboard) {
-            int numX = 0, numO = 0, numEmpty = 0;
-            for(CellLocation l : CellLocation.values()) {
-                switch(gameboard.getCellState(l)) {
-                    case OCCUPIED_BY_X:
-                        numX++;
-                        break;
-                    case OCCUPIED_BY_O:
-                        numO++;
-                        break;
-                    default:
-                        numEmpty++;
-                        break;
-                }
-            }
-            if ( numEmpty == 0 ) throw new IllegalStateException("There is no empty place");
-            else if ( numX <= numO ) return Player.X;
-            else return Player.O;
-        }
+        
         
         public Player OtherPlayer(Player np) {
             if (np == Player.X) return Player.O;
@@ -80,39 +62,33 @@ public class YourConsultant implements Consultant {
             else return Player.Empty;
         }
         
-        private Player WhoIsWinner(GameBoard gb) {
-            for (CellLocation[] line : SAMELINE) {
-                CellState[] l = { gb.getCellState(line[0]), gb.getCellState(line[1]), gb.getCellState(line[2]) };
-                if (l[0] != CellState.EMPTY && l[0] == l[1] && l[0] == l[2]) {
-                    return PlayerFromCellState(l[0]);
-                }
-            }
-            return Player.Empty;
-        }
+        
         
         public Map<CellLocation, Integer> SCORE;
         
         public CellLocation FindBestStep(GameBoard gb) {
             SCORE = new HashMap<CellLocation, Integer>();
-            Player p = NextPlayer(gb);
-            MinMax(gb, p);
+            
+            MGameBoard mgb = new MGameBoard(gb);
+            Player p = mgb.NextPlayer();
+            MinMax(mgb, p);
             
             return CellLocation.BOTTOM_CENTRE;
         }
         
-        public int MinMax(GameBoard gb, Player p) {
-            if( WhoIsWinner(gb) == p ) return 1;
-            else if ( WhoIsWinner(gb) == OtherPlayer(p) ) return -1;
+        public int MinMax(MGameBoard mgb, Player p) {
+            if( PlayerFromCellState(mgb.WhoIsWinner()) == p ) return 1;
+            else if ( PlayerFromCellState(mgb.WhoIsWinner()) == p ) return -1;
             
             List<Integer> scores = new ArrayList<>(); 
             for(CellLocation l : CellLocation.values()) {
-                if( gb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
+                if( mgb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
                     
                 }
             }
             
             if( scores.size() == 0) return 0;
-            else if( p == NextPlayer(gb) ) return Collections.max(scores);
+            else if( mgb.NextPlayer() == p ) return Collections.max(scores);
             else return Collections.min(scores);
             
         }
