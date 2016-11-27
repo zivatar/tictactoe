@@ -76,7 +76,7 @@ public class YourConsultant implements Consultant {
     public CellLocation findTheBestStep(MGameBoard mgb) {
         cellScores = new HashMap<CellLocation, Integer>();
 
-        minMax(mgb, 0, 1);
+        miniMax(mgb, 0, 1);
             
         // find the location of the largest score
         int maxVal = Integer.MIN_VALUE;
@@ -94,32 +94,37 @@ public class YourConsultant implements Consultant {
         return maxLoc;
     }
         
-    public int minMax(MGameBoard mgb, int depth, int turn) {
+    /**
+     * Searches for the optimal solution
+     * @param mgb
+     *          a mutable game board
+     * @param depth
+     *          depth of the search
+     * @param turn
+     *          which player has this turn
+     * @return minimum or maximum of the scores
+     */
+    public int miniMax(MGameBoard mgb, int depth, int turn) {
         CellState winner = mgb.whoIsWinner();
         
         if( winner == mgb.getOriginalPlayer() )return 1;
         else if( winner == otherPlayer(mgb.getOriginalPlayer()) ) return -1;
            
-        
         List<Integer> localScores = new ArrayList<>(); 
         for(CellLocation l : CellLocation.values()) {
             if( mgb.getCellState(l) == CellState.EMPTY ) { // try empty cells only
-                if ( turn == 1 ) { // original player
-                    mgb.setCellState(l, mgb.getOriginalPlayer());
-                    int sc = minMax(mgb, depth + 1, 2);
-                    localScores.add(sc);
-                    if ( depth == 0 ) cellScores.put(l, sc);
-                }
-                else if ( turn == 2 ) { // other player
-                    mgb.setCellState(l, otherPlayer(mgb.getOriginalPlayer()));
-                    int sc = minMax(mgb, depth + 1, 1);
-                    localScores.add(sc);
-                }
-                mgb.clearCellState(l);
+                CellState actualPlayer = mgb.nextPlayer();
+                mgb.setCellState(l, actualPlayer); // try the empty cell
+                
+                int sc = miniMax(mgb, depth + 1, 3-turn); // turn: 2->1 1->2
+                localScores.add(sc);
+                if ( actualPlayer == mgb.getOriginalPlayer() && depth == 0 ) cellScores.put(l, sc);
+       
+                mgb.clearCellState(l); // make the cell empty again
             }
         }
             
-        if( localScores.size() == 0) return 0;
+        if ( localScores.isEmpty() ) return 0;
         else if ( turn == 1 ) return Collections.max(localScores);
         else return Collections.min(localScores);
     }
